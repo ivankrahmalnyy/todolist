@@ -24,7 +24,8 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-
+#    ports:
+#      - "8000:8000"
   migrations:
      image: ikrahmalnyy/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
      environment:
@@ -44,7 +45,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-#    restart: always
+    restart: always
 #    ports:
 #      - 5432:5432
     volumes:
