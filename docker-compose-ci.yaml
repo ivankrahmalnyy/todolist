@@ -24,8 +24,7 @@ services:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
-    ports:
-      - "8000:8000"
+
   migrations:
      image: ikrahmalnyy/todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
      environment:
