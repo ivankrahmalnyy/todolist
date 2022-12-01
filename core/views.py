@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, login, logout
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 
-from core.serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer
+from core.serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer, UpdatePasswordSerializer
 
 USER_MODEL = get_user_model()
 
@@ -34,4 +34,12 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UpdatePasswordView(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UpdatePasswordSerializer
+
+    def get_object(self):
+        return self.request.user
 
