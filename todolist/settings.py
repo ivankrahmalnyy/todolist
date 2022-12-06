@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core',
+    'goals',
     'rest_framework',
     'corsheaders',
     'social_django',
+    'django_filters',
+    'drf_spectacular',
 
 ]
 
@@ -149,4 +152,10 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = env.str('SOCIAL_AUTH_VK_OAUTH2_SECRET')
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/categories'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_FILTER_BACKENDS' : ['django_filters.rest_framework.DjangoFilterBackend'],
+}
 
