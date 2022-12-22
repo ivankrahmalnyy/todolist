@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: sermalenk/skypro-front:lesson-37
+    image: sermalenk/skypro-front:lesson-38
     restart: always
     depends_on:
       - api
@@ -30,6 +30,21 @@ services:
       - .env
     command: >
       sh -c "python3 manage.py migrate"
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    command: >
+      sh -c "python3 manage.py runbot"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+
   db:
     image: postgres:latest
     environment:
