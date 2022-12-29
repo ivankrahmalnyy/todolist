@@ -80,7 +80,7 @@ class UpdatePasswordSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.password = make_password(validated_data['new_password'])
         instance.save()
-        return
+        return instance
 
 
 

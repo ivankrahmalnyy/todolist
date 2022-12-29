@@ -30,13 +30,16 @@ class GoalCategoryListView(ListAPIView):
     ]
     ordering_fields = ['title', 'created']
     ordering = ['title']
-    search_fields = ['title']
+    search_fields = ['title', 'board']
 
-    def get_queryset(self):
+    def get_queryset(self) -> list[GoalCategory]:
         return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
 
 class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Создание категории для цели
+    """
     model = GoalCategory
     serializer_class = GoalCategorySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -45,6 +48,9 @@ class GoalCategoryView(generics.RetrieveUpdateDestroyAPIView):
         return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance):
+        """
+        При удалении категории у нее меняется поле is_deleted на True
+        """
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()
@@ -73,8 +79,8 @@ class GoalListView(generics.ListAPIView):
     search_fields = ['title']
 
     def get_queryset(self):
-        return Goal.objects.filter(category__board__participants__user=self.request.user).exclude(status=Goal.Status.archived)
-
+        return Goal.objects.filter(category__board__participants__user=self.request.user).exclude(
+            status=Goal.Status.archived)
 
 class GoalView(generics.RetrieveUpdateDestroyAPIView):
     model = Goal
@@ -85,6 +91,9 @@ class GoalView(generics.RetrieveUpdateDestroyAPIView):
         return Goal.objects.filter(category__board__participants__user=self.request.user)
 
     def perform_destroy(self, instance):
+        """
+        При удалении цели у нее меняется поле статус на "В архиве"
+        """
         instance.status = Goal.Status.archived
         instance.save()
         return instance
@@ -143,8 +152,12 @@ class BoardView(generics.RetrieveUpdateDestroyAPIView):
         return Board.objects.filter(participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance: Board):
-        # При удалении доски помечаем ее как is_deleted,
-        # «удаляем» категории, обновляем статус целей
+        """
+        При удалении доски ее поле is_deleted меняется на True и у всех категорий этой
+            доски поле is_deleted меняется тоже на True.
+            У всех связанных целей поле status меняется на "В архиве"
+
+        """
         with transaction.atomic():
             instance.is_deleted = True
             instance.save()
